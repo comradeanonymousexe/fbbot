@@ -1,0 +1,14 @@
+=========Work flows==========
+
+
+
+- Commands are registered in utils.py. All texts are converted into lower case for case insensitivity. 
+
+- The process command determines the command part and argument part from any message. 
+[Bug: If the message is emoji or picture, it raises an error at the terminal. Although program ignores the error, but let's get rid of it. Add try catch blocks to work on legit messages only.]
+
+- process_command() returns a dict of commands tagged as true or false. There has been used a loop to set this, O(n) time complexity- where, by deterimining the command with regex, and updating correspondent keys value to True is of O(1) complexity. I tried, but unfinished. 
+
+- FB login email and password are environment variables.
+
+- translator.py does straightforward tranlation job using Translator module. 

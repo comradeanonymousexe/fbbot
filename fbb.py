@@ -5,27 +5,30 @@ from trnslt import *
 from utils import *
 from reminder import *
 
-#remove later
-import re
-import json
 
 
 email = os.environ.get('fb_login_email')
 password = os.environ.get('fb_login_psd')
 
 
+#====Have to implement error handling logics====#
+
 # Subclass of Client to handle messages
 class Bot(fbchat.Client):
 
     def onMessage(self, author_id, message_object, thread_id, thread_type, **kwargs):
+      
+       #===Dont talk to yourself===#
+        if author_id == self.uid:
+            return
 
-        #DEBUG AREA#
-        print(message_object)
-        #00#
-
+        #===point out the command and extract the arguments. File: utils.py===#
         text, commands = process_command(message_object.text)
         
 
+        #===HANDLE COMMANDS===#
+
+        #---Translate and Echo (for debugging) File: trnslt.py ---#
         if commands['-ta']:
 
             response = translate_arabic_to_english(text)
@@ -42,33 +45,47 @@ class Bot(fbchat.Client):
             self.send(Message(text=text), thread_id=thread_id, thread_type=thread_type)
 
 
+
+        #---take authors name as argument, registers into json. File: reminder.py---#
+        #---Nicely implemented---#
+
         if commands['-setname']:
 
-            if thread_type != ThreadType.USER:
-                response = "This command is only valid to be used in DMs"
+            try:
+
+                ID = author_id
+                status_code = name_entry(text,ID)
+
+
+                if status_code:
+                    response = f"Succefully registered {text}\'s name with the id of {ID}"
+
+                else:
+                    response = f"Entry {text} already exists."
+
                 self.send(Message(text=response), thread_id=thread_id, thread_type=thread_type)
-            else:
-                name_entry(text,author_id)
 
-# Only for testing, get rid of later.
+            except Exception as e:
+                
+                response = f"an error occured, {e}"
+                self.send(Message(text=response), thread_id=thread_id, thread_type=thread_type)
+
+
         if commands['-send']:
-            
-            recipient = text.split()[0]
-            text = re.sub(r'^' + re.escape(recipient) + r'\s*', '', text)
+
+            name, response = text_slice(text)
+
+            if extract_id(name)[0]:
 
 
-            with open("reminder.json", "r") as json_file:
-                data = json.load(json_file)
+                recipient = extract_id(text)[1]
 
-            recipient_id = data["users"].get(recipient)
-
-            if recipient_id:
-                self.send(Message(text=text), thread_id=recipient_id, thread_type=ThreadType.USER)
+                self.send(Message(text=response), thread_id=recipient, thread_type=ThreadType.USER)
+                self.send(Message(text="Done :) "), thread_id=thread_id, thread_type=thread_type)
 
             else:
-                self.send(Message(text=f"User '{recipient}' not found"), thread_id=thread_id, thread_type=thread_type)
-#00#
-
+            
+                self.send(Message(text=extract_id(text)[1]), thread_id=thread_id, thread_type=thread_type)
 
 
 
@@ -77,6 +94,5 @@ class Bot(fbchat.Client):
 
 
 bot = Bot(email, password)
-
 
 bot.listen()
