@@ -1,13 +1,14 @@
 import json
 
-jsonF = "reminder.json"
+userF = "users.json"
+taskF = "tasks.json"
 
 
 #====Have to implement error handling logics====#
 
 def name_entry(name, author_id):
     
-    with open(jsonF, "r") as json_file:
+    with open(userF, "r") as json_file:
         data = json.load(json_file)
 
 
@@ -38,7 +39,7 @@ def extract_id(name):
         #name,message = argument_slice(text)
         
 
-        with open(jsonF,"r") as json_file:
+        with open(userF,"r") as json_file:
             data = json.load(json_file)
 
 
@@ -58,3 +59,98 @@ def extract_id(name):
 
 
 
+
+
+#---debug---#
+def process_reminder(text):
+
+    user_blocks = text.strip().split("\n\n")
+
+    user_data = {}  # Dictionary to store user data
+
+    for block in user_blocks:
+
+        lines = block.strip().split("\n")
+        username = lines[0]
+        tasks = lines[1:]  # The rest of the lines contain tasks and times
+
+        user_data[username] = []
+
+        for task_line in tasks:
+
+            if ":" in task_line:
+                task, time = task_line.split(":")
+                task = task.strip()
+                time = time.strip()
+
+            else:
+                task = task_line.strip()
+                time = "everyday"
+
+            user_data[username].append({"task": task, "time": time})
+
+#---take out---#
+
+
+    return user_data
+
+
+
+def sort_reminder(task_list):
+
+    def key_func(task):
+        if task["time"] == "everyday":
+            return (0, 0, 0)
+        else:
+            date_parts = task["time"].split('-')
+            year = int(date_parts[2])
+            month = int(date_parts[1])
+            day = int(date_parts[0])
+            return (1, year, month, day)
+
+    return sorted(task_list, key=key_func)
+
+
+
+def submit_reminder(user_data):
+
+    for user, tasks in user_data.items():  
+        user_data[user] = sort_reminder(tasks)
+
+    with open(taskF, 'r') as json_file:
+        existing_data = json.load(json_file)
+
+
+    existing_data["user_data"] = user_data
+
+
+    with open(taskF, 'w') as json_file:
+        json.dump(existing_data, json_file, indent=4)
+
+    return 1
+
+
+data = '''
+Mahdi
+learn autogpt
+meet x: 20-3-2023
+meet y: 10-3-2023
+do chores
+
+Nahdi
+revise laravel
+eat burger: 2-2-2023
+
+Saadnan
+check virality gc
+study chemistry
+'''
+
+data = process_reminder(data)
+
+submit_reminder(data)
+
+
+
+
+#====debug=====#

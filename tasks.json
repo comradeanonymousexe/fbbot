@@ -1,0 +1,42 @@
+{
+    "user_data": {
+        "Mahdi": [
+            {
+                "task": "learn autogpt",
+                "time": "everyday"
+            },
+            {
+                "task": "do chores",
+                "time": "everyday"
+            },
+            {
+                "task": "meet y",
+                "time": "10-3-2023"
+            },
+            {
+                "task": "meet x",
+                "time": "20-3-2023"
+            }
+        ],
+        "Nahdi": [
+            {
+                "task": "revise laravel",
+                "time": "everyday"
+            },
+            {
+                "task": "eat burger",
+                "time": "2-2-2023"
+            }
+        ],
+        "Saadnan": [
+            {
+                "task": "check virality gc",
+                "time": "everyday"
+            },
+            {
+                "task": "study chemistry",
+                "time": "everyday"
+            }
+        ]
+    }
+}

@@ -77,7 +77,6 @@ class Bot(fbchat.Client):
 
             if extract_id(name)[0]:
 
-
                 recipient = extract_id(text)[1]
 
                 self.send(Message(text=response), thread_id=recipient, thread_type=ThreadType.USER)
@@ -87,6 +86,25 @@ class Bot(fbchat.Client):
             
                 self.send(Message(text=extract_id(text)[1]), thread_id=thread_id, thread_type=thread_type)
 
+
+
+        #---testing--#
+        if commands['-notify']:
+
+            process_reminder(text)
+
+            self.send(Message(text="Notification enlisted soxesfully"), thread_id=thread_id, thread_type=thread_type)
+
+
+        if commands['-dcsend']:
+
+            status = send_dc(text)
+
+            if status:
+                self.send(Message(text="pathano successful, giye deekhe ashen"), thread_id=thread_id, thread_type=thread_type)
+
+            else:
+                self.send(Message(text="genjam lagse, message pouche nai"), thread_id=thread_id, thread_type=thread_type)
 
 
 
