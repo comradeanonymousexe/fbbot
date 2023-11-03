@@ -1,8 +1,13 @@
 import re
 import requests
+import json
 
 commands = ['-ta','-te','-setname','-echo','-send','-notify','-dcsend']
 commands_dict = {key:False for key in commands }
+
+#==for scheduling dc msgs==#
+api_key = 'uz6qTIE8bKu+GqoDOWxwea21CoFU8tdsCr9x8Y7Er80='
+
 
 #implement error handling for each command
 # commands that be truncated from 'text'
@@ -54,5 +59,36 @@ def send_dc(message):
         return 0
 
 
+
+def update_job_schedule(message):
+
+    job = "4671247"
+
+    task_data = {
+        'job': {
+            'extendedData': {
+                'body': json.dumps(message)
+            }
+        }
+    }
+
+    url = f"https://api.cron-job.org/jobs/{job}"
+
+    headers = {
+        'Authorization': f'Bearer {api_key}',
+        'Content-Type': 'application/json',
+    }
+    
+    try:
+        response = requests.patch(url, data=json.dumps(task_data), headers=headers)
+        response.raise_for_status()
+        return "Success: Job schedule updated successfully."
+
+    except requests.exceptions.RequestException as e:
+        return f"Failure: Failed to update job schedule. Error: {str(e)}"
+
+
+message = {"content":"This is a Noou message"}
+print(update_job_schedule(message))
 
 #print(process_command("-te Mew"))
