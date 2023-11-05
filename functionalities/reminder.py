@@ -20,7 +20,7 @@ def name_entry(name, author_id):
     data["users"][name]["facebook"] = author_id
     data["users"][name]["discord"] = None
 
-    with open(jsonF, "w") as json_file:
+    with open(userF, "w") as json_file:
         json.dump(data, json_file, indent=4)
 
 
@@ -34,14 +34,8 @@ def extract_id(name):
 
     try:
 
-        # -> parts of -send functionalities are commented out <- #
-         #---first argument is name, rest are messages- gotta pretty it up---#
-        #name,message = argument_slice(text)
-        
-
         with open(userF,"r") as json_file:
             data = json.load(json_file)
-
 
         users = data.get('users',{})
         recipient = users.get(name)
@@ -56,9 +50,6 @@ def extract_id(name):
 
     except Exception as e:
         return 0,e
-
-
-
 
 
 #---debug---#
@@ -130,27 +121,3 @@ def submit_reminder(user_data):
     return 1
 
 
-data = '''
-Mahdi
-learn autogpt
-meet x: 20-3-2023
-meet y: 10-3-2023
-do chores
-
-Nahdi
-revise laravel
-eat burger: 2-2-2023
-
-Saadnan
-check virality gc
-study chemistry
-'''
-
-data = process_reminder(data)
-
-submit_reminder(data)
-
-
-
-
-#====debug=====#

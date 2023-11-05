@@ -5,7 +5,7 @@ import json
 commands = ['-ta','-te','-setname','-echo','-send','-notify','-dcsend']
 commands_dict = {key:False for key in commands }
 
-#==for scheduling dc msgs==#
+#==for scheduling dc msgs in cron-job api==#
 api_key = 'uz6qTIE8bKu+GqoDOWxwea21CoFU8tdsCr9x8Y7Er80='
 
 
@@ -18,7 +18,7 @@ def process_command(text):
     text = text.lower()
 
     for prefix in commands_dict:
-        commands_dict[prefix] = text.startswith(prefix) #--BUG: two commands with same starting string cant be assigned
+        commands_dict[prefix] = text.startswith(prefix) # --BUG: two commands with same starting string cant be assigned
 
     #=============just a gibberish RegEx thing from chatgpt================#
 
@@ -33,13 +33,13 @@ def process_command(text):
 
 #==== Slice the text, to determine Name and Message. Currently works with '-send' functionality 
 def text_slice(text):
+    sections = text.split(',', 1)
 
-    sections = text.split(',',1)
-
-    name = sections[0].strip()
+    names = sections[0].split('-')
+    names = [name.strip() for name in names]
     message = sections[1].strip()
 
-    return name, message
+    return names, message
 
 
 
@@ -86,9 +86,3 @@ def update_job_schedule(message):
 
     except requests.exceptions.RequestException as e:
         return f"Failure: Failed to update job schedule. Error: {str(e)}"
-
-
-message = {"content":"This is a Noou message"}
-print(update_job_schedule(message))
-
-#print(process_command("-te Mew"))
