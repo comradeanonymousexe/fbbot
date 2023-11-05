@@ -52,9 +52,6 @@ def extract_id(name):
         return 0,e
 
 
-
-
-
 #---debug---#
 def process_reminder(text):
 

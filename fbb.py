@@ -1,9 +1,9 @@
 import fbchat
 import os 
 from fbchat.models import *
-from trnslt import *
-from utils import *
-from reminder import *
+from functionalities.trnslt import *
+from functionalities.reminder import *
+from functionalities.utils import *
 
 
 
@@ -72,19 +72,16 @@ class Bot(fbchat.Client):
 
 
         if commands['-send']:
+            names, message = text_slice(text)
 
-            name, response = text_slice(text)
+            for name in names:
+                id_exists, recipient_id = extract_id(name)
 
-            if extract_id(name)[0]:
-
-                recipient = extract_id(text)[1]
-
-                self.send(Message(text=response), thread_id=recipient, thread_type=ThreadType.USER)
-                self.send(Message(text="Done :) "), thread_id=thread_id, thread_type=thread_type)
-
-            else:
-            
-                self.send(Message(text=extract_id(text)[1]), thread_id=thread_id, thread_type=thread_type)
+                if id_exists:
+                    self.send(Message(text=message), thread_id=recipient_id, thread_type=ThreadType.USER)
+                    self.send(Message(text=f"Sending Done to {name}"), thread_id=thread_id, thread_type=thread_type)
+                else:
+                    self.send(Message(text=f"{message}, {name}"), thread_id=thread_id, thread_type=thread_type)
 
 
 
